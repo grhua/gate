@@ -22,7 +22,7 @@ jobs:
     env:
       # 替换成你真正可用的 Cloudflare Worker 域名
       # 例如: https://my-worker.example.workers.dev/check?sstp=vpn:vpn@
-      CHECK_WORKER: "https://YOUR_WORKER_DOMAIN/check?sstp=vpn:vpn@"
+      CHECK_WORKER: "https://check.helei.kdns.fr/check?sstp=vpn:vpn@"
       CHECK_CONCURRENCY: "32"
       CHECK_TIMEOUT: "90"
       HTTP_TIMEOUT: "60"
