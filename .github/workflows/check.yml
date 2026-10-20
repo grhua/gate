@@ -16,17 +16,8 @@ concurrency:
 
 jobs:
   check:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     timeout-minutes: 30
-
-    env:
-      # 替换成你真正可用的 Cloudflare Worker 域名
-      # 例如: https://my-worker.example.workers.dev/check?sstp=vpn:vpn@
-      CHECK_WORKER: "https://check.helei.kdns.fr/check?sstp=vpn:vpn@"
-      CHECK_CONCURRENCY: "32"
-      CHECK_TIMEOUT: "90"
-      HTTP_TIMEOUT: "60"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -39,21 +30,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Probe Worker health before running the checker
-        shell: bash
-        run: |
-          set -euo pipefail
-          TEST_URL="${CHECK_WORKER}1.1.1.1:443"
-          echo "Testing Worker: ${TEST_URL}"
-          curl -fsSIL --max-time 20 "$TEST_URL" || {
-            echo "::error::Worker health check failed. CHECK_WORKER is unavailable or DNS/CF is broken."
-            echo "Current CHECK_WORKER=${CHECK_WORKER}"
-            exit 1
-          }
-          echo "Worker health check passed."
-
       - name: Get VPN Gate nodes + check via Cloudflare Worker + build page
         run: python vpngate.py
+        env:
+          CHECK_WORKER: "https://check.helei.kdns.fr/check?sstp=vpn:vpn@"
+          CHECK_CONCURRENCY: "32"
+          CHECK_TIMEOUT: "90"
 
       - name: Ensure GitHub Pages is enabled (one-time auto setup)
         run: |
